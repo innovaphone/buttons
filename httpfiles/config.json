@@ -1,0 +1,329 @@
+{
+    "database": {
+        "init": [
+            {
+                "cmd": "table",
+                "name": "devices",
+                "init": [
+                    {
+                        "cmd": "column",
+                        "name": "id",
+                        "type": "BIGSERIAL PRIMARY KEY NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "dev_id",
+                        "type": "VARCHAR(256)"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "d_mac",
+                        "type": "VARCHAR(256) NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "button",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "action",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "sip",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "text",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "secret",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "ownerguid",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "d_type",
+                        "type": "INTEGER"
+                    }
+                ]
+            },
+            {
+                "cmd": "table",
+                "name": "mwi",
+                "init": [
+                    {
+                        "cmd": "column",
+                        "name": "id",
+                        "type": "BIGSERIAL PRIMARY KEY NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "sip",
+                        "type": "VARCHAR UNIQUE NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "message_center",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "served_user",
+                        "type": "VARCHAR"
+                    }
+                ]
+            },
+            {
+                "cmd": "table",
+                "name": "rcc",
+                "init": [
+                    {
+                        "cmd": "column",
+                        "name": "id",
+                        "type": "BIGSERIAL PRIMARY KEY NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "cn",
+                        "type": "VARCHAR UNIQUE NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "pbx",
+                        "type": "VARCHAR"
+                    }
+                ]
+            },
+            {
+                "cmd": "table",
+                "name": "history",
+                "init": [
+                    {
+                        "cmd": "column",
+                        "name": "id",
+                        "type": "BIGSERIAL PRIMARY KEY NOT NULL"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "guid",
+                        "type": "uuid"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "mac",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "button",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "action",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "info",
+                        "type": "VARCHAR"
+                    },
+                    {
+                        "cmd": "column",
+                        "name": "started",
+                        "type": "BIGINT DEFAULT EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000 NOT NULL"
+                    }
+                ]
+            },
+            {
+                "cmd": "statement",
+                "name": "insert-data",
+                "query": "INSERT INTO devices (dev_id, d_mac, sip) VALUES (%s,%s,%s) RETURNING id",
+                "args": {
+                    "serial": { "type": "string" },
+                    "mac": { "type": "string" },
+                    "@sip": { "type": "string" }
+                },
+                "return": "id"
+            },
+            {
+                "cmd": "statement",
+                "name": "add-queue",
+                "query": "INSERT INTO rcc (cn, pbx) VALUES (%s,%s) RETURNING id",
+                "args": {
+                    "queue": { "type": "string" },
+                    "pbx": { "type": "string" }
+                },
+                "return": "id"
+            },
+            {
+                "cmd": "statement",
+                "name": "add-device",
+                "query": "INSERT INTO devices (dev_id, d_mac, d_type, ownerguid) VALUES (%s,%s,%s,%s) RETURNING id",
+                "args": {
+                    "id": { "type": "string" },
+                    "mac": { "type": "string" },
+                    "dtype": { "type": "string" },
+                    "@guid": { "type": "string" }
+                },
+                "return": "id"
+            },
+            {
+                "cmd": "statement",
+                "name": "get-actions",
+                "query": "SELECT * from devices WHERE ownerguid = %s ",
+                "args": {
+                    "@guid": { "type": "string" }
+                }
+            },
+            {
+                "cmd": "statement",
+                "name": "get-allactions",
+                "query": "SELECT * from devices"
+            },
+            {
+                "cmd": "statement",
+                "name": "get-queues",
+                "query": "SELECT * from rcc"
+            },
+            {
+                "cmd": "statement",
+                "name": "deletedevice",
+                "query": "DELETE from devices WHERE id = %s",
+                "args": {
+                    "actionid": { "type": "string" }
+                }
+            },
+            {
+                "cmd": "statement",
+                "name": "deletequeues",
+                "query": "DELETE from rcc WHERE id = %s",
+                "args": {
+                    "queueid": { "type": "string" }
+                }
+            },
+            {
+                "cmd": "statement",
+                "name": "set-action",
+                "query": "UPDATE devices SET button = %s, sip = %s, text = %s, action = %s WHERE id = %s",
+                "args": {
+                    "button": { "type": "string" },
+                    "sipuser": { "type": "string" },
+                    "text": { "type": "string" },
+                    "option": { "type": "string" },
+                    "actionid": { "type": "string" }
+                }
+            },
+            {
+                "cmd": "statement",
+                "name": "set-action-phone",
+                "query": "UPDATE devices SET button = %s, sip = %s, text = %s, action = %s WHERE id = %s",
+                "args": {
+                    "@sip": { "type": "string" },
+                    "sipuser": { "type": "string" },
+                    "text": { "type": "string" },
+                    "option": { "type": "string" },
+                    "actionid": { "type": "string" }
+                }
+            },
+            {
+                "cmd": "statement",
+                "name": "set-action-hotkey",
+                "query": "UPDATE devices SET button = %s, sip = %s, text = %s, action = %s WHERE id = %s",
+                "args": {
+                    "@sip": { "type": "string" },
+                    "sipuser": { "type": "string" },
+                    "text": { "type": "string" },
+                    "option": { "type": "string" },
+                    "actionid": { "type": "string" }
+                }
+            },
+            {
+                "cmd": "statement",
+                "name": "set-action-logging",
+                "query": "UPDATE devices SET button = %s, sip = %s, text = %s, action = %s WHERE id = %s",
+                "args": {
+                    "msgfilter": { "type": "string" },
+                    "sipuser": { "type": "string" },
+                    "text": { "type": "string" },
+                    "option": { "type": "string" },
+                    "actionid": { "type": "string" }
+                }
+            }
+        ]
+    },
+    "config": {
+        "init": [
+            {
+                "cmd": "item",
+                "name": "pbxname",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "item",
+                "name": "hwid",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "item",
+                "name": "e164",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "item",
+                "name": "httppath",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "item",
+                "name": "httpkey",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "item",
+                "name": "extsocketpath",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "item",
+                "name": "extsocketremoteip",
+                "type": "STRING",
+                "default": "",
+                "password": false
+            },
+            {
+                "cmd": "mode",
+                "name": "pbx-manager",
+                "read": true,
+                "write": true
+            }
+        ]
+    },
+    "javascript": {
+        "eval": [
+            "innovaphone-buttonsservice.js"
+        ]
+    }
+}
