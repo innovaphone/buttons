@@ -18,3 +18,9 @@ The goal of this project is to demonstrate simple interactions using physical or
 - Interact with other Apps like "Connect, Working,...).
 
 ## 🚀 Getting Started
+
+🎓 Tutorial
+
+For a step-by-step video guide on using this project, check out the YouTube tutorial:
+
+👉 https://www.youtube.com/playlist?list=PLsHQOzBKYeZz60eU4Xjp_XHukkot96wh0
