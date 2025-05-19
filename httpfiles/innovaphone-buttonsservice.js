@@ -26,7 +26,7 @@ var httppath = Config.httppath;
 var extSocketPath = Config.extsocketpath;
 var extSocketRemoteIp = Config.extsocketremoteip;
 
-
+var appObjectName = "buttons";
 
 Config.onchanged(function () {
     pbxname = Config.pbxname;
@@ -566,9 +566,9 @@ WebServer.onrequest("extapi", function (req) {
                     inserthistory(guid, "Webhook", Database.escape(type), data);
                     if (type == "connect") {
                         if (dst[0] === "@") {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + dst + " " + msg, "notify": ["?" + dst.substring(1)], "tags": tags, "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + dst + " " + msg, "notify": ["?" + dst.substring(1)], "tags": tags, "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         } else {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + dst + " " + msg, "notify": ["" + dst + ""], "tags": tags, "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + dst + " " + msg, "notify": ["" + dst + ""], "tags": tags, "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                         if (numbers.length > 0) {
                             numbers.forEach(function (number) {
@@ -673,10 +673,10 @@ WebServer.onwebsocket("extapi", function (websocket) {
                         }
                     } else if (data.action == "connect") {
                         if (data.sip[0] === "@") {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                         else {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                     } else if (data.action == "call") {
                         log("Start Call To: " + data.sip);
@@ -815,10 +815,10 @@ function doaction(button, id, src, rssi, callback) {
                             }
                         } else if (data.action == "connect") {
                             if (data.sip[0] === "@") {
-                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                             }
                             else {
-                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                             }
                         } else if (data.action == "call") {
                             log("Start Call To: " + data.sip);
@@ -913,10 +913,10 @@ function dophoneaction(user, number) {
                             }
                         } else if (data.action == "connect") {
                             if (data.sip[0] === "@") {
-                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                             }
                             else {
-                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                                appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                             }
                         } else if (data.action == "call") {
                             log("Start Call To: " + data.sip);
@@ -1004,10 +1004,10 @@ function dohotkeyaction(user, key) {
                         }
                     } else if (data.action == "connect") {
                         if (data.sip[0] === "@") {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                         else {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + data.text, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                     } else if (data.action == "call") {
                         log("Start Call To: " + data.sip);
@@ -1094,10 +1094,10 @@ function doLogAction(id, button, msg) {
                         }
                     } else if (data.action == "connect") {
                         if (data.sip[0] === "@") {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + msg, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + msg, "notify": ["?" + data.sip.substring(1) + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                         else {
-                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": "buttons", "text": "@" + data.sip + " " + msg, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
+                            appsocket_connect.send(JSON.stringify({ "mt": "Post", src: guid, discussionGuid: guid, "topic": appObjectName, "text": "@" + data.sip + " " + msg, "notify": ["" + data.sip + ""], "tags": ["Buttons"], "private": false, "attaching": 0, "discussionTitle": "#Buttons" }));
                         }
                     } else if (data.action == "call") {
                         log("Start Call To: " + data.sip);
@@ -1321,9 +1321,11 @@ var appsocket_events = false;
 
 new PbxApi("Services").onconnected(function (conn) {
     log("Connected to PBX API with connection: " + JSON.stringify(conn));
+    var connInfo = JSON.parse(conn.info);
     serviceconns.push(conn);
     if (conn.pbx == pbxname) {
         conn.send(JSON.stringify({ "mt": "SubscribeServices", "api": "Services" }));
+        appObjectName = connInfo.appobj;
     }
 
     log("Services connected: " + conn.pbx);
@@ -1723,8 +1725,8 @@ function checkForConnectPost(obj) {
                 const infoAsInteger = parseInt(data[0].info, 10);
                 appsocket_connect.send(JSON.stringify({
                     "mt": "Post",
-                    "author": "buttons",
-                    "topic": "buttons",
+                    "author": appObjectName,
+                    "topic": appObjectName,
                     "repliesTo": infoAsInteger,
                     "notify": ["" + obj.dest + ""],
                     "text": "Call to: @" + obj.dest + " - Connected: " + obj.connected + " - Pressed Keys: " + obj.dtmf,
