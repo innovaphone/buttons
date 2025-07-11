@@ -315,7 +315,7 @@ WebServer.onwebsocket("shelly", function (websocket) {
 
                 if (component[0] == "input") {
                     log("Shelly Direct Input of Device " + deviceserial + "-" + component[1] + " Event: " + obj.params.events[0].event);
-                    if (devicetype = src[0] == "shellyplusi4") {
+                    if (src[0] == "shellyplusi4" || src[0] == "shellyi4g3") {
                         var data = {};
                         data.address = deviceserial + "-" + component[1];
                         data.button = null;
