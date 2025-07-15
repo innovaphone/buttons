@@ -1,4 +1,4 @@
-﻿var pbxapiconns = [];
+var pbxapiconns = [];
 var rccapiconns = [];
 var userconn = [];
 var lastcallid = 0;
@@ -27,6 +27,43 @@ var extSocketPath = Config.extsocketpath;
 var extSocketRemoteIp = Config.extsocketremoteip;
 
 var appObjectName = "buttons";
+
+var shellyDeviceConfigs = {
+    "shellyplusi4": {
+        "single_push": 1,
+        "double_push": 2,
+        "triple_push": 3,
+        "long_push": 4,
+        "btn_up": 5,
+        "btn_down": 6
+    },
+    "shellyi4g3": {
+        "single_push": 1,
+        "double_push": 2,
+        "triple_push": 3,
+        "long_push": 4,
+        "btn_up": 5,
+        "btn_down": 6
+    },
+    "shellyplus1": {
+        "single_push": 1,
+        "double_push": 2,
+        "triple_push": 3,
+        "long_push": 4,
+        "btn_up": 5,
+        "btn_down": 6
+    }
+};
+
+var shellyDefaultConfig = {
+    "single_push": 1,
+    "double_push": 2,
+    "triple_push": 3,
+    "long_push": 4,
+    "btn_up": 5,
+    "btn_down": 6
+};
+
 
 Config.onchanged(function () {
     pbxname = Config.pbxname;
@@ -314,37 +351,43 @@ WebServer.onwebsocket("shelly", function (websocket) {
                 var component = obj.params.events[0].component.split(":");
 
                 if (component[0] == "input") {
-                    log("Shelly Direct Input of Device " + deviceserial + "-" + component[1] + " Event: " + obj.params.events[0].event);
-                    if (src[0] == "shellyplusi4" || src[0] == "shellyi4g3") {
-                        var data = {};
-                        data.address = deviceserial + "-" + component[1];
-                        data.button = null;
-                        if (obj.params.events[0].event == "single_push") {
-                            data.button = 1;
-                        }
-                        if (obj.params.events[0].event == "double_push") {
-                            data.button = 2;
-                        }
-                        if (obj.params.events[0].event == "triple_push") {
-                            data.button = 3;
-                        }
-                        if (obj.params.events[0].event == "long_push") {
-                            data.button = 4;
-                        }
-                        if (obj.params.events[0].event == "btn_up") {
-                            data.button = 5;
-                        }
-                        if (obj.params.events[0].event == "btn_down") {
-                            data.button = 6;
-                        }
-                        if (data.button != null) {
-                            doaction(data.button, data.address, obj.src, false, function (error, responseData) {
-                                if (error) {
-                                    log(error, responseData);
-                                }
-                            });
-                        }
+                    var event = null;
+                    if (obj && obj.params && obj.params.events && obj.params.events[0] && obj.params.events[0].event) {
+                        event = obj.params.events[0].event;
                     }
+
+                    var device = src[0];
+                    var address = deviceserial + "-" + component[1];
+
+                    log("Shelly Direct Input of Device " + address + " Event: " + event);
+
+                    if (!event) {
+                        log("No event found, ignoring.");
+                        return;
+                    }
+
+                    var config = shellyDeviceConfigs[device];
+                    if (!config) {
+                        log("Unknown device '" + device + "', using default event interpretation.");
+                        config = shellyDefaultConfig;
+                    }
+
+                    var button = config[event];
+                    if (button == null) {
+                        log("Event '" + event + "' not recognized in config for device '" + device + "'.");
+                        return;
+                    }
+
+                    var data = {
+                        address: address,
+                        button: button
+                    };
+
+                    doaction(data.button, data.address, obj.src, false, function (error, responseData) {
+                        if (error) {
+                            log(error, responseData);
+                        }
+                    });
                 }
                 else {
                     if (obj.params.events[0].data) {
