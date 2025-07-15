@@ -347,17 +347,27 @@ WebServer.onwebsocket("shelly", function (websocket) {
             }
 
 
-            if (obj.params && obj.params.events && obj.params.events[0]) {
-                var component = obj.params.events[0].component.split(":");
+            if (obj.params && ('switch:0' in obj.params || 'switch:1' in obj.params || (obj.params.events && obj.params.events[0] && obj.params.events[0].component))) {
+                var component = [];
+                if (obj.params["switch:0"]) {
+                    component[0] = "switch";
+                    component[1] = "0";
+                }
+                else if (obj.params["switch:1"]) {
+                    component[0] = "switch";
+                    component[1] = "1";
+                }
+                else {
+                    component = obj.params.events[0].component.split(":");
+                }
+
+                var address = deviceserial + "-" + component[1];
 
                 if (component[0] == "input") {
                     var event = null;
                     if (obj && obj.params && obj.params.events && obj.params.events[0] && obj.params.events[0].event) {
                         event = obj.params.events[0].event;
                     }
-
-                    var device = src[0];
-                    var address = deviceserial + "-" + component[1];
 
                     log("Shelly Direct Input of Device " + address + " Event: " + event);
 
@@ -366,21 +376,45 @@ WebServer.onwebsocket("shelly", function (websocket) {
                         return;
                     }
 
-                    var config = shellyDeviceConfigs[device];
+                    var config = shellyDeviceConfigs[devicetype];
                     if (!config) {
-                        log("Unknown device '" + device + "', using default event interpretation.");
+                        log("Unknown device '" + devicetype + "', using default event interpretation.");
                         config = shellyDefaultConfig;
                     }
 
                     var button = config[event];
                     if (button == null) {
-                        log("Event '" + event + "' not recognized in config for device '" + device + "'.");
+                        log("Event '" + event + "' not recognized in config for device '" + devicetype + "'.");
                         return;
                     }
 
                     var data = {
                         address: address,
                         button: button
+                    };
+
+                    doaction(data.button, data.address, obj.src, false, function (error, responseData) {
+                        if (error) {
+                            log(error, responseData);
+                        }
+                    });
+                }
+                else if (component[0] == "switch") {
+                    var output = 5;
+                    if (component[1] === "0") {
+                        if (obj.params["switch:0"].output == true) {
+                            output = 6;
+                        }
+                    }
+                    else if (component[1] === "1") {
+                        if (obj.params["switch:1"].output == true) {
+                            output = 6;
+                        }
+                    }
+
+                    var data = {
+                        address: address,
+                        button: output
                     };
 
                     doaction(data.button, data.address, obj.src, false, function (error, responseData) {
